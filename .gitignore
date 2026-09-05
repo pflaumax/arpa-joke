@@ -22,3 +22,4 @@ CLAUDE.md
 
 # Deploy target — recreate with: echo "<domain>" > CNAME
 CNAME
+.surgeignore

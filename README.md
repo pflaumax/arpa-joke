@@ -1,6 +1,6 @@
 # A website on a `.arpa` domain
 
-A one-page joke hosted on a domain inside `.arpa` — the top-level domain
+A page hosted on a domain inside `.arpa` — the top-level domain
 reserved for critical internet infrastructure, which is not open to public
 registration.
 
@@ -50,42 +50,33 @@ Total cost: nothing.
 
 ## What's on it
 
-A fake *Steins;Gate*-themed CERN terminal — system status readouts, an event
-log, a "Send D-Mail" button that fails with `ERROR 403: Try again yesterday`,
-and a damage report counting gelatinized bananas.
+A [*Steins;Gate*](https://steins-gate.fandom.com/wiki/Steins;Gate_Wiki)-themed
+CERN terminal — system status readouts, an event log, a "Send D-Mail" button,
+and a damage report counting gelatinized bananas. The whole thing is bilingual;
+a footer button switches every visible string between English and Japanese.
 
 Two things to find:
 
 - **Click the wordmark** to run the whole page through an SVG displacement
   filter. Click again or press `Escape` to undo it.
-- **Press `↑ ↓ ← →`** for a message about who is watching.
+- **Press `↑ ↓ ← →`** for a message about who is watching (in whichever
+  language is currently active).
 
-The joke is the contrast: the address looks like production infrastructure, the
-contents do not.
+"Send D-Mail" plays out a short beat — a sending state, a random in-universe
+status line, then the same 403 punchline — and bumps a counter that persists
+per browser via `localStorage`. Nothing is sent anywhere; there is no server to
+send it to.
 
 ## Stack
 
-One `index.html`. No build step, no dependencies, no framework — about 5 KB
-gzipped in a single request. The distortion is one static SVG filter
-(`feTurbulence` → `feDisplacementMap`) toggled by one CSS class.
+One `index.html`. No build step, no dependencies, no framework, no external
+requests — about 30 KB gzipped in a single request.
 
-## Deploying
-
-The deploy target lives in an untracked `CNAME` file. Recreate it once:
-
-```bash
-echo "cern.4.f.4.0.5.1.f.1.0.7.4.0.1.0.0.2.ip6.arpa" > CNAME
-```
-
-Then publish from the project directory:
-
-```bash
-npx surge . cern.4.f.4.0.5.1.f.1.0.7.4.0.1.0.0.2.ip6.arpa
-```
-
-Run it from the project root. Running `npx surge` from your home directory makes
-it scan all of `$HOME` and fail on macOS with
-`EPERM: scandir 'Library/Accounts'`.
+The typeface is a subset of [IPAGothic](https://moji.or.jp/ipafont/)
+(IPA Font License), the Japanese free stand-in for MS Gothic, inlined as a
+`data:` URI so it costs no extra request and renders both English and Japanese
+from one file. The distortion is one static SVG filter (`feTurbulence` →
+`feDisplacementMap`) toggled by one CSS class.
 
 ## Caveats
 
@@ -96,10 +87,3 @@ it scan all of `$HOME` and fail on macOS with
 - **Mildly abusive.** It repurposes a reserved zone and passes a validation
   check with an address that isn't ours. Harmless, but do not build anything
   real on it.
-
-## Credit
-
-The technique is Ethan Hawksley's, who in turn found it via
-[a post on hijacking `e164.arpa`](https://lina.sh/blog/hijacking-e164-arpa).
-
-*El Psy Kongroo.*
