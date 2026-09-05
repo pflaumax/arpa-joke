@@ -20,6 +20,9 @@ npm-debug.log*
 CLAUDE.md
 .claude/
 
+# Blog draft (local only)
+BLOG.md
+
 # Deploy target — recreate with: echo "<domain>" > CNAME
 CNAME
 .surgeignore

@@ -310,7 +310,7 @@
     </button>
 
     <header class="masthead">
-      <p data-en="[CLASSIFIED] " data-ja="[機密] ">[CLASSIFIED] <strong data-en="CERN REVERSE-ZONE OBSERVATION NODE" data-ja="CERN逆引きゾーン観測拠点">CERN REVERSE-ZONE OBSERVATION NODE</strong></p>
+      <p><span data-en="[CLASSIFIED] " data-ja="[機密] ">[CLASSIFIED] </span><strong data-en="CERN REVERSE-ZONE OBSERVATION NODE" data-ja="CERN逆引きゾーン観測拠点">CERN REVERSE-ZONE OBSERVATION NODE</strong></p>
       <p><span data-en="WORLDLINE: 1.048596% &nbsp;/&nbsp; ACCESS: ROOT &nbsp;/&nbsp; SIGNAL: " data-ja="世界線: 1.048596% &nbsp;/&nbsp; 権限: ROOT &nbsp;/&nbsp; 信号: ">WORLDLINE: 1.048596% &nbsp;/&nbsp; ACCESS: ROOT &nbsp;/&nbsp; SIGNAL: </span><span class="blink" data-en="LIVE" data-ja="生放送中">LIVE</span></p>
     </header>
 
@@ -474,7 +474,14 @@
       const applyLang = (lang) => {
         document.documentElement.lang = lang;
         translatable.forEach((el) => {
-          el.textContent = el.dataset[lang] ?? el.dataset.en;
+          const text = el.dataset[lang] ?? el.dataset.en;
+          if (el.children.length === 0) {
+            el.textContent = text;
+            return;
+          }
+
+          const first = el.firstChild;
+          if (first && first.nodeType === Node.TEXT_NODE) first.nodeValue = text;
         });
         translatableAttrs.forEach((el) => {
           for (const attr of ["aria-label", "title"]) {
