@@ -42,7 +42,7 @@
   body {
     min-height: 100dvh;
     margin: 0;
-    padding: calc(var(--step) * 4.5) var(--gutter);
+    padding: calc(var(--step) * 3) var(--gutter);
     background: var(--bg);
     color: var(--green);
     font: 0.875rem/1.45 "Gothic Terminal", "MS Gothic", Menlo, "DejaVu Sans Mono",
@@ -54,7 +54,7 @@
   .terminal {
     width: min(100%, var(--shell));
     margin-inline: auto;
-    padding: var(--gutter);
+    padding: calc(var(--step) * 3.5) var(--gutter);
     border: 1px solid var(--line);
     background: var(--panel);
     box-shadow: 0 0 1.75rem rgb(35 255 74 / 0.08);
@@ -62,7 +62,7 @@
 
   .rule {
     height: 1px;
-    margin-block: var(--gutter);
+    margin-block: calc(var(--gutter) * 0.75);
     border: 0;
     background: var(--line);
   }
@@ -128,6 +128,8 @@
     align-items: baseline;
   }
 
+  .log-row[hidden] { display: none; }
+
   .log-row p,
   .footer p { margin: 0; }
 
@@ -155,7 +157,7 @@
     display: block;
     width: max-content;
     max-width: 100%;
-    margin: 0 0 var(--gutter);
+    margin: 0 0 calc(var(--gutter) * 0.75);
     padding: 0;
     overflow-x: auto;
     border: 0;
@@ -201,6 +203,77 @@
     opacity: 0.75;
   }
 
+  /* Divergence meter (nixie-style clock) */
+  .meter {
+    margin: 0 0 calc(var(--gutter) * 0.5);
+  }
+
+  .meter-title {
+    margin: 0 0 calc(var(--step) * 1.5);
+    color: var(--cyan);
+    font-size: 0.9375rem;
+    line-height: 1.2;
+  }
+
+  .nixie {
+    display: flex;
+    gap: 2px;
+    flex-wrap: wrap;
+  }
+
+  .nixie-tube {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 1.85rem;
+    height: 2.75rem;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    background:
+      repeating-linear-gradient(
+        0deg,
+        rgb(81 255 114 / 0.05) 0,
+        rgb(81 255 114 / 0.05) 1px,
+        transparent 1px,
+        transparent 4px
+      ),
+      radial-gradient(ellipse at 50% 40%, rgb(81 255 114 / 0.1), transparent 70%),
+      var(--panel);
+    color: var(--green);
+    font-size: 1.5rem;
+    line-height: 1;
+    text-shadow: 0 0 6px rgb(81 255 114 / 0.65), 0 0 14px rgb(81 255 114 / 0.35);
+  }
+
+  .nixie-tube[data-glow="cyan"] {
+    color: var(--cyan);
+    text-shadow: 0 0 6px rgb(98 231 255 / 0.65), 0 0 14px rgb(98 231 255 / 0.35);
+  }
+
+  .nixie-sep {
+    display: grid;
+    place-items: center;
+    width: 0.5rem;
+    color: var(--dim);
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  .nixie-tube::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 2px;
+    box-shadow: inset 0 0 0.5rem rgb(0 0 0 / 0.55);
+    pointer-events: none;
+  }
+
+  .meter-caption {
+    margin: calc(var(--step) * 0.6) 0 0;
+    color: var(--dim);
+    font-size: 0.75rem;
+  }
+
   /* Effects */
   .blink { animation: blink 1.1s steps(2, start) infinite; }
 
@@ -229,8 +302,14 @@
   @media (min-width: 43rem) and (max-height: 47rem) {
     body { padding-block: 2px; }
     .terminal { padding-block: calc(var(--step) * 2); }
-    .rule { margin-block: calc(var(--step) * 2); }
+    .rule { margin-block: calc(var(--step) * 1.5); }
     .logo { margin-bottom: calc(var(--step) * 2); }
+    .meter { margin-bottom: calc(var(--step) * 1.5); }
+  }
+
+  @media (min-width: 43rem) and (max-height: 40rem) {
+    .nixie-tube { width: 1.55rem; height: 2.3rem; font-size: 1.25rem; }
+    .nixie-sep { font-size: 1.25rem; }
   }
 
   @media (max-width: 42.5rem) {
@@ -245,7 +324,6 @@
     .rule { margin-block: calc(var(--step) * 2); }
     .logo { margin-bottom: calc(var(--step) * 2.4); }
     .section-title { margin-bottom: var(--step); }
-    .message { min-height: 2.25rem; }
     .lang-switch { margin-top: calc(var(--step) * 1.4); }
 
     /* 44px is the platform-documented minimum comfortable touch target
@@ -259,6 +337,8 @@
   @media (max-width: 32.5rem) {
     .row { grid-template-columns: max-content minmax(0.5rem, 1fr); }
     .row dd { grid-column: 1 / -1; padding-left: 2ch; }
+    .nixie-tube { width: 1.55rem; height: 2.3rem; font-size: 1.25rem; }
+    .nixie-sep { font-size: 1.25rem; }
   }
 
   /* Short phones (SE-class): the desktop no-scroll rule at min-width:43rem
@@ -316,6 +396,33 @@
 
     <hr class="rule">
 
+    <hr class="rule">
+
+    <div class="grid">
+      <section aria-labelledby="meter-title" class="meter">
+        <h2 class="section-title meter-title" id="meter-title" data-en="// DIVERGENCE METER" data-ja="// 世界線変動率計">// DIVERGENCE METER</h2>
+        <div class="nixie" data-nixie role="img" aria-label="Divergence meter reading">
+          <span class="nixie-tube" data-nixie-digit>0</span>
+          <span class="nixie-tube" data-nixie-digit>0</span>
+          <span class="nixie-sep">.</span>
+          <span class="nixie-tube" data-nixie-digit>0</span>
+          <span class="nixie-tube" data-nixie-digit>0</span>
+          <span class="nixie-tube" data-nixie-digit>0</span>
+          <span class="nixie-tube" data-glow="cyan" data-nixie-digit>0</span>
+          <span class="nixie-sep">%</span>
+        </div>
+        <p class="meter-caption" data-en="Reading drifts. It should not." data-ja="数値が揺れている。あってはならないことだ。">Reading drifts. It should not.</p>
+      </section>
+
+      <section aria-labelledby="relay-title">
+        <h2 class="section-title" id="relay-title" data-en="// TEMPORAL RELAY" data-ja="// 時間中継">// TEMPORAL RELAY</h2>
+        <button class="button" type="button" data-dmail data-en="[ SEND D-MAIL ]" data-ja="[ Dメール送信 ]">[ SEND D-MAIL ]</button>
+        <p class="message" data-dmail-result role="status"></p>
+      </section>
+    </div>
+
+    <hr class="rule">
+
     <div class="grid">
       <section aria-labelledby="status-title">
         <h2 class="section-title" id="status-title" data-en="// SYSTEM STATUS" data-ja="// システム状態">// SYSTEM STATUS</h2>
@@ -337,26 +444,11 @@
             <time class="dim" datetime="23:41:05">[23:41:05]</time>
             <p data-en="Reverting local causality cache..." data-ja="因果律キャッシュを復元中……">Reverting local causality cache...</p>
           </div>
+          <div class="log-row">
+            <time class="dim" datetime="23:41:09">[23:41:09]</time>
+            <p><span data-en="D-Mails sent: " data-ja="送信済みDメール: ">D-Mails sent: </span><span data-dmail-count>000042</span></p>
+          </div>
         </div>
-      </section>
-    </div>
-
-    <hr class="rule">
-
-    <div class="grid">
-      <section aria-labelledby="relay-title">
-        <h2 class="section-title" id="relay-title" data-en="// TEMPORAL RELAY" data-ja="// 時間中継">// TEMPORAL RELAY</h2>
-        <button class="button" type="button" data-dmail data-en="[ SEND D-MAIL ]" data-ja="[ Dメール送信 ]">[ SEND D-MAIL ]</button>
-        <p class="message" data-dmail-result role="status"></p>
-      </section>
-
-      <section aria-labelledby="damage-title">
-        <h2 class="section-title" id="damage-title" data-en="// DAMAGE REPORT" data-ja="// 被害報告">// DAMAGE REPORT</h2>
-        <dl class="rows">
-          <div class="row"><dt data-en="D-Mails sent" data-ja="送信済みDメール">D-Mails sent</dt><dd data-dmail-count>000042</dd></div>
-          <div class="row"><dt data-en="Timelines ruined" data-ja="崩壊した時間軸">Timelines ruined</dt><dd>000001</dd></div>
-          <div class="row"><dt data-en="Bananas gelatinized" data-ja="ゲル化したバナナ">Bananas gelatinized</dt><dd>000008</dd></div>
-        </dl>
       </section>
     </div>
 
@@ -378,6 +470,32 @@
       "use strict";
 
       const $ = (selector) => document.querySelector(selector);
+
+      /* Divergence meter
+       * A live clock rendered through nixie-tube digits, formatted like the
+       * anime's worldline percentage: HH MM SS . <drifting decimal> %.
+       * The last tube never quite agrees with real time - it wobbles by a
+       * fraction of a percent every tick, because it should not be stable. */
+      const nixieDigits = document.querySelectorAll("[data-nixie-digit]");
+      if (nixieDigits.length) {
+        const pad = (n, len) => String(n).padStart(len, "0");
+
+        const paintNixie = () => {
+          const now = new Date();
+          const hh = pad(now.getHours(), 2);
+          const mm = pad(now.getMinutes(), 2);
+          const ss = pad(now.getSeconds(), 2);
+          const drift = Math.floor(Math.random() * 10);
+          const value = `${hh}${mm}${ss}${drift}`;
+
+          nixieDigits.forEach((tube, i) => {
+            tube.textContent = value[i] ?? "0";
+          });
+        };
+
+        paintNixie();
+        setInterval(paintNixie, 1000);
+      }
 
       /* Distortion */
       const distort = (() => {
