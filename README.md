@@ -51,9 +51,10 @@ Total cost: nothing.
 ## What's on it
 
 A [*Steins;Gate*](https://steins-gate.fandom.com/wiki/Steins;Gate_Wiki)-themed
-CERN terminal — system status readouts, an event log, a "Send D-Mail" button,
-and a damage report counting gelatinized bananas. The whole thing is bilingual;
-a footer button switches every visible string between English and Japanese.
+CERN terminal — system status readouts, a live event log, a nixie-tube-style
+"Divergence Meter" clock, and a "Send D-Mail" button. The whole thing is
+bilingual; a footer button switches every visible string between English and
+Japanese.
 
 Two things to find:
 
@@ -62,15 +63,20 @@ Two things to find:
 - **Press `↑ ↓ ← →`** for a message about who is watching (in whichever
   language is currently active).
 
+The Divergence Meter is a live clock rendered as CSS-only nixie tubes (no
+images), formatted like the anime's worldline percentage — and its last digit
+never quite agrees with real time, drifting by a fraction of a percent every
+tick.
+
 "Send D-Mail" plays out a short beat — a sending state, a random in-universe
-status line, then the same 403 punchline — and bumps a counter that persists
-per browser via `localStorage`. Nothing is sent anywhere; there is no server to
-send it to.
+status line, then the same 403 punchline — and logs a new entry with a real
+timestamp and a `localStorage`-backed counter into the event log. Nothing is
+sent anywhere; there is no server to send it to.
 
 ## Stack
 
 One `index.html`. No build step, no dependencies, no framework, no external
-requests — about 30 KB gzipped in a single request.
+requests — about 51 KB raw, ~31 KB gzipped, in a single request.
 
 The typeface is a subset of [IPAGothic](https://moji.or.jp/ipafont/)
 (IPA Font License), the Japanese free stand-in for MS Gothic, inlined as a
