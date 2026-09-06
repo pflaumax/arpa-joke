@@ -9,8 +9,7 @@
 <meta name="robots" content="index, follow">
 <title>[CERN] Reverse Zone Observation Node</title>
 <style>
-  /* Subset of IPAGothic - (c) IPA, Japan - IPA Font License v1.0
-     https://opensource.org/license/ipafont */
+  /* Subset of IPAGothic - (c) IPA, Japan - IPA Font License v1.0 - https://opensource.org/license/ipafont */
   @font-face {
     font-family: "Gothic Terminal";
     font-style: normal;
@@ -319,15 +318,11 @@
     .log-row { grid-template-columns: 1fr; gap: 0; }
     .log-row p { padding-left: 2ch; }
 
-    /* Tighten vertical rhythm - phones scroll, but every extra em of
-       whitespace is an extra thumb-swipe to reach the interactive parts. */
     .rule { margin-block: calc(var(--step) * 2); }
     .logo { margin-bottom: calc(var(--step) * 2.4); }
     .section-title { margin-bottom: var(--step); }
     .lang-switch { margin-top: calc(var(--step) * 1.4); }
 
-    /* 44px is the platform-documented minimum comfortable touch target
-       (Apple HIG / Material Design); the desktop padding alone falls short. */
     .button {
       min-height: 44px;
       padding-block: calc(var(--step) * 1.8);
@@ -341,9 +336,6 @@
     .nixie-sep { font-size: 1.25rem; }
   }
 
-  /* Short phones (SE-class): the desktop no-scroll rule at min-width:43rem
-     never applies below that width, so this is the only place scroll length
-     matters. Trim padding further without shrinking type or touch targets. */
   @media (max-width: 26rem) {
     body { padding: calc(var(--step) * 0.6); }
     .terminal { padding: calc(var(--step) * 1.8); }
@@ -445,7 +437,7 @@
             <p data-en="Reverting local causality cache..." data-ja="因果律キャッシュを復元中……">Reverting local causality cache...</p>
           </div>
           <div class="log-row">
-            <time class="dim" datetime="23:41:09">[23:41:09]</time>
+            <time class="dim" data-live-time datetime="23:41:09">[23:41:09]</time>
             <p><span data-en="D-Mails sent: " data-ja="送信済みDメール: ">D-Mails sent: </span><span data-dmail-count>000042</span></p>
           </div>
         </div>
@@ -471,11 +463,7 @@
 
       const $ = (selector) => document.querySelector(selector);
 
-      /* Divergence meter
-       * A live clock rendered through nixie-tube digits, formatted like the
-       * anime's worldline percentage: HH MM SS . <drifting decimal> %.
-       * The last tube never quite agrees with real time - it wobbles by a
-       * fraction of a percent every tick, because it should not be stable. */
+      /* Divergence meter (nixie clock) */
       const nixieDigits = document.querySelectorAll("[data-nixie-digit]");
       if (nixieDigits.length) {
         const pad = (n, len) => String(n).padStart(len, "0");
@@ -497,6 +485,20 @@
         setInterval(paintNixie, 1000);
       }
 
+      /* D-Mail counter log timestamp */
+      const liveTime = document.querySelector("[data-live-time]");
+      const updateLiveTime = () => {
+        if (!liveTime) return;
+        const pad2 = (n) => String(n).padStart(2, "0");
+        const now = new Date();
+        const hh = pad2(now.getHours());
+        const mm = pad2(now.getMinutes());
+        const ss = pad2(now.getSeconds());
+        liveTime.textContent = `[${hh}:${mm}:${ss}]`;
+        liveTime.setAttribute("datetime", `${hh}:${mm}:${ss}`);
+      };
+      updateLiveTime();
+
       /* Distortion */
       const distort = (() => {
         const trigger = $("[data-glitch-trigger]");
@@ -515,11 +517,7 @@
         return { clear: () => set(false) };
       })();
 
-      /* D-Mail relay
-       * Everything here is client-only theatre: no request leaves the
-       * browser, no address is collected. Clicking plays out a short beat
-       * (sending -> a random in-universe status -> the same 403 punchline)
-       * and bumps a locally-stored counter that persists per browser only. */
+      /* D-Mail relay (client-only theatre, no request leaves the browser) */
       const dmail = $("[data-dmail]");
       const dmailResult = $("[data-dmail-result]");
       const dmailCount = $("[data-dmail-count]");
@@ -574,6 +572,7 @@
           /* Storage disabled (private mode, quota) - the click still plays out. */
         }
         paint(next);
+        updateLiveTime();
 
         clearTimeout(statusTimer);
         clearTimeout(errorTimer);
