@@ -6,6 +6,8 @@ registration.
 
 **Live:** [`http://cern.4.f.4.0.5.1.f.1.0.7.4.0.1.0.0.2.ip6.arpa`](http://cern.4.f.4.0.5.1.f.1.0.7.4.0.1.0.0.2.ip6.arpa)
 
+<img width="787" height="797" alt="image" src="https://github.com/user-attachments/assets/8235aa11-b0b3-46f1-a940-496ce1be90fa" />
+
 `http://` only — see [Caveats](#caveats).
 
 ## The trick
